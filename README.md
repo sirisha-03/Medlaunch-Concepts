@@ -16,9 +16,28 @@ A fully functional multi-step form application built with React and JavaScript, 
 medlaunch-multistep-form/
 ├── src/
 │   ├── components/
-│   │   └── MultiStepForm.jsx    # Main form component with all steps
+│   │   ├── MultiStepForm.jsx    # Main form orchestrator component
+│   │   ├── steps/
+│   │   │   ├── Step1.jsx        # Step 1: Organization & Primary Contact
+│   │   │   ├── Step2.jsx        # Step 2: Facility Details
+│   │   │   ├── Step3.jsx        # Step 3: Leadership Contacts
+│   │   │   ├── Step4.jsx        # Step 4: Site Information
+│   │   │   ├── Step5.jsx       # Step 5: Services & Certifications
+│   │   │   ├── Step6.jsx        # Step 6: Review & Submit
+│   │   │   └── index.js         # Step components export
+│   │   └── shared/
+│   │       ├── Field.jsx         # Reusable text input component
+│   │       ├── Select.jsx        # Reusable dropdown component
+│   │       ├── DateField.jsx    # Single date picker component
+│   │       ├── ChipDateInput.jsx # Multi-date picker with chips
+│   │       ├── ContactCard.jsx  # Contact information card
+│   │       ├── SupportChat.jsx  # Support chat button
+│   │       └── index.js         # Shared components export
+│   ├── utils/
+│   │   ├── constants.js         # Constants (US_STATES, STEPS)
+│   │   └── helpers.js          # Utility functions (date formatting, file size)
 │   ├── styles/
-│   │   └── styles.css           # Pure CSS stylesheet
+│   │   └── styles.css          # Pure CSS stylesheet
 │   ├── App.jsx                  # Root App component
 │   └── main.jsx                 # Application entry point
 ├── index.html                   # HTML template
@@ -32,11 +51,13 @@ medlaunch-multistep-form/
 1. **Clone or download the repository**
 
 2. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 3. **Start the development server**:
+
    ```bash
    npm run dev
    ```
@@ -89,17 +110,19 @@ medlaunch-multistep-form/
 
 ### Code Organization
 
-- **Modular Components**: Each step is a separate component for maintainability
-- **Reusable UI Components**: Field, Select, DateField, ChipDateInput, ContactCard
-- **Helper Functions**: Utility functions for date formatting and file size formatting
-- **State Management**: Centralized form state using React useState hook
+- **Modular Components**: Each step is a separate component (`Step1.jsx` through `Step6.jsx`) for maintainability
+- **Reusable UI Components**: Shared components in `shared/` folder (Field, Select, DateField, ChipDateInput, ContactCard, SupportChat)
+- **Helper Functions**: Utility functions in `utils/helpers.js` for date formatting and file size formatting
+- **Constants**: Shared constants in `utils/constants.js` (US_STATES, STEPS)
+- **State Management**: Centralized form state using React useState hook in `MultiStepForm.jsx`
 
 ### Styling Strategy
 
 - Pure CSS implementation (no Tailwind or other CSS frameworks)
-- Utility classes for common patterns (flexbox, grid, spacing)
+- Semantic class names (e.g., `.section-title`, `.form-fields-container`, `.contact-card-title`) for maintainability
 - Component-specific styles for complex UI elements
 - Responsive design using CSS media queries
+- All measurements in pixels (px) for pixel-perfect Figma implementation
 
 ## Assumptions Made
 
@@ -137,5 +160,3 @@ medlaunch-multistep-form/
 - Add error handling and user feedback improvements
 
 ## Contact
-
-

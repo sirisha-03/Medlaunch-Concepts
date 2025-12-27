@@ -56,7 +56,6 @@ export default function MultiStepForm() {
     billing_zip: "",
 
     site_locationMode: "",
-    site_addMethod: "upload",
     site_uploadedFiles: [],
 
     svc_search: "",
@@ -64,9 +63,7 @@ export default function MultiStepForm() {
     std_selected: [],
     std_expirationDate: "",
     std_applicationDate: "",
-    thrombolytic_input: "",
     thrombolytic_dates: [],
-    thrombectomy_input: "",
     thrombectomy_dates: [],
 
     ready_certify: false,
@@ -93,36 +90,75 @@ export default function MultiStepForm() {
         };
       }
 
-      // Step 3: copy from primary
-      if (key === "ceo_sameAsPrimary" && value) {
-        return {
-          ...prev,
-          ceo_sameAsPrimary: true,
-          ceo_firstName: prev.firstName,
-          ceo_lastName: prev.lastName,
-          ceo_phone: prev.workPhone,
-          ceo_email: prev.email,
-        };
+      // Step 3: copy from primary or clear when unchecked
+      if (key === "ceo_sameAsPrimary") {
+        if (value) {
+          // Checked: Copy from primary contact
+          return {
+            ...prev,
+            ceo_sameAsPrimary: true,
+            ceo_firstName: prev.firstName,
+            ceo_lastName: prev.lastName,
+            ceo_phone: prev.workPhone,
+            ceo_email: prev.email,
+          };
+        } else {
+          // Unchecked: Clear the values
+          return {
+            ...prev,
+            ceo_sameAsPrimary: false,
+            ceo_firstName: "",
+            ceo_lastName: "",
+            ceo_phone: "",
+            ceo_email: "",
+          };
+        }
       }
-      if (key === "quality_sameAsPrimary" && value) {
-        return {
-          ...prev,
-          quality_sameAsPrimary: true,
-          quality_firstName: prev.firstName,
-          quality_lastName: prev.lastName,
-          quality_phone: prev.workPhone,
-          quality_email: prev.email,
-        };
+      if (key === "quality_sameAsPrimary") {
+        if (value) {
+          // Checked: Copy from primary contact
+          return {
+            ...prev,
+            quality_sameAsPrimary: true,
+            quality_firstName: prev.firstName,
+            quality_lastName: prev.lastName,
+            quality_phone: prev.workPhone,
+            quality_email: prev.email,
+          };
+        } else {
+          // Unchecked: Clear the values
+          return {
+            ...prev,
+            quality_sameAsPrimary: false,
+            quality_firstName: "",
+            quality_lastName: "",
+            quality_phone: "",
+            quality_email: "",
+          };
+        }
       }
-      if (key === "invoicing_sameAsPrimary" && value) {
-        return {
-          ...prev,
-          invoicing_sameAsPrimary: true,
-          invoicing_firstName: prev.firstName,
-          invoicing_lastName: prev.lastName,
-          invoicing_phone: prev.workPhone,
-          invoicing_email: prev.email,
-        };
+      if (key === "invoicing_sameAsPrimary") {
+        if (value) {
+          // Checked: Copy from primary contact
+          return {
+            ...prev,
+            invoicing_sameAsPrimary: true,
+            invoicing_firstName: prev.firstName,
+            invoicing_lastName: prev.lastName,
+            invoicing_phone: prev.workPhone,
+            invoicing_email: prev.email,
+          };
+        } else {
+          // Unchecked: Clear the values
+          return {
+            ...prev,
+            invoicing_sameAsPrimary: false,
+            invoicing_firstName: "",
+            invoicing_lastName: "",
+            invoicing_phone: "",
+            invoicing_email: "",
+          };
+        }
       }
 
       return { ...prev, [key]: value };
@@ -140,6 +176,19 @@ export default function MultiStepForm() {
     !form.email;
 
   const missingStep2 = !form.facilityType;
+  const missingStep3 =
+    !form.ceo_firstName ||
+    !form.ceo_lastName ||
+    !form.ceo_phone ||
+    !form.ceo_email ||
+    !form.invoicing_firstName ||
+    !form.invoicing_lastName ||
+    !form.invoicing_phone ||
+    !form.invoicing_email ||
+    !form.billing_street ||
+    !form.billing_city ||
+    !form.billing_state ||
+    !form.billing_zip;
   const missingStep4 = !form.site_locationMode;
   const missingStep5 = form.svc_selected.length === 0;
   const missingStep6 = !form.ready_certify;
@@ -147,6 +196,7 @@ export default function MultiStepForm() {
   const canContinue = useMemo(() => {
     if (step === 1) return !missingStep1;
     if (step === 2) return !missingStep2;
+    if (step === 3) return !missingStep3;
     if (step === 4) return !missingStep4;
     if (step === 5) return !missingStep5;
     if (step === 6) return !missingStep6;
@@ -155,6 +205,7 @@ export default function MultiStepForm() {
     step,
     missingStep1,
     missingStep2,
+    missingStep3,
     missingStep4,
     missingStep5,
     missingStep6,
@@ -204,7 +255,7 @@ export default function MultiStepForm() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="app-container">
       {/* Top bar */}
       <header className="header header-with-user">
         <div className="header-container">
@@ -216,35 +267,22 @@ export default function MultiStepForm() {
         </div>
       </header>
 
-      <main className="max-w-960px mx-auto px-6 py-10">
+      <main className="main-container">
         {/* Title + Stepper */}
-        <div className="flex flex-col items-start gap-4">
-          <div className="w-full flex items-center justify-between">
-            <h1 className="page-title">{pageTitle}</h1>
-            <div className="text-sm text-slate-600">Step {step} of 6</div>
+        <div className="step-indicator-container">
+          <div className="step-header">
+            <h1 className="section-title-large">{pageTitle}</h1>
+            <div className="step-counter">Step {step} of 6</div>
           </div>
 
-          <div className="w-full" style={{ maxWidth: "960px" }}>
-            <div
-              className="flex items-start"
-              style={{
-                width: "100%",
-                maxWidth: "960px",
-                height: "31px",
-                justifyContent: "space-between",
-                paddingRight: "0px",
-                gap: "6px",
-                paddingTop: "16px",
-                paddingBottom: "16px",
-                borderRadius: "8px",
-              }}
-            >
+          <div style={{ maxWidth: "960px", width: "100%" }}>
+            <div className="step-bar-container">
               {STEPS.map((label, idx) => {
                 const i = idx + 1;
                 const isActive = i === step;
                 const isDone = i < step;
                 return (
-                  <div key={label} className="flex-1 min-w-0">
+                  <div key={label} className="step-bar-item">
                     <div
                       className={
                         "step-bar " +
@@ -257,10 +295,8 @@ export default function MultiStepForm() {
                     />
                     <div
                       className={
-                        "mt-2 text-11px text-center truncate " +
-                        (isActive
-                          ? "text-slate-800 font-medium"
-                          : "text-slate-500")
+                        "step-label " +
+                        (isActive ? "step-label-active" : "step-label-inactive")
                       }
                       title={label}
                     >
@@ -274,24 +310,19 @@ export default function MultiStepForm() {
         </div>
 
         {/* Content */}
-        <div className="mt-10 flex justify-center">
-          {step === 5 ? (
-            <div className="w-full max-w-960px">
-              <Step5 form={form} setForm={setForm} />
-            </div>
-          ) : (
-            <div className="card">
-              {step === 1 ? <Step1 form={form} setField={setField} /> : null}
-              {step === 2 ? <Step2 form={form} setField={setField} /> : null}
-              {step === 3 ? <Step3 form={form} setField={setField} /> : null}
-              {step === 4 ? <Step4 form={form} setForm={setForm} /> : null}
-              {step === 6 ? <Step6 form={form} setForm={setForm} /> : null}
-            </div>
-          )}
+        <div className="content-wrapper">
+          <div className="card">
+            {step === 1 ? <Step1 form={form} setField={setField} /> : null}
+            {step === 2 ? <Step2 form={form} setField={setField} /> : null}
+            {step === 3 ? <Step3 form={form} setField={setField} /> : null}
+            {step === 4 ? <Step4 form={form} setForm={setForm} /> : null}
+            {step === 5 ? <Step5 form={form} setForm={setForm} /> : null}
+            {step === 6 ? <Step6 form={form} setForm={setForm} /> : null}
+          </div>
         </div>
 
         {/* Bottom actions */}
-        <div className="w-full max-w-961px mx-auto mt-10 flex items-center justify-between">
+        <div className="action-buttons-wrapper">
           {step === 1 ? (
             <button type="button" className="btn-exit" onClick={onExit}>
               Exit
@@ -316,7 +347,7 @@ export default function MultiStepForm() {
               Submit Application
             </button>
           ) : (
-            <div className="flex items-center gap-6">
+            <div className="action-buttons-group">
               <button
                 type="button"
                 className="btn btn-primary"
@@ -341,16 +372,16 @@ export default function MultiStepForm() {
         </div>
 
         {/* Step jump helper (preview only) */}
-        <div className="max-w-4xl mx-auto mt-6 text-center">
-          <div className="inline-flex rounded-full border border-slate-300 bg-white p-1 text-xs">
+        <div className="step-jump-container">
+          <div className="step-jump-wrapper">
             {[1, 2, 3, 4, 5, 6].map((n) => (
               <button
                 key={n}
                 className={
-                  "px-3 py-1 rounded-full " +
+                  "step-jump-button " +
                   (n === step
-                    ? "bg-slate-900 text-white"
-                    : "text-slate-700 hover:bg-slate-100")
+                    ? "step-jump-button-active"
+                    : "step-jump-button-inactive")
                 }
                 onClick={() => {
                   setStep(n);

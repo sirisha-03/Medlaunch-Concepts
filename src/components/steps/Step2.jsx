@@ -11,22 +11,17 @@ export function Step2({ form, setField }) {
   ];
 
   return (
-    <div>
-      <h2 className="text-xl font-semibold text-slate-800">
-        Facility and Organization Type
-      </h2>
+    <section className="form-fields-container">
+      <h2 className="section-title">Facility and Organization Type</h2>
 
-      <div className="mt-8">
-        <div className="text-sm font-semibold text-slate-700">
+      <div className="facility-type-section">
+        <div className="facility-type-label">
           Facility Type <span className="text-red-500">*</span>
         </div>
 
-        <div className="mt-4 space-y-4">
+        <div className="facility-type-options">
           {options.map((opt) => (
-            <label
-              key={opt}
-              className="flex items-center gap-3 text-sm text-slate-800"
-            >
+            <label key={opt} className="radio-label">
               <input
                 type="radio"
                 name="facilityType"
@@ -35,12 +30,11 @@ export function Step2({ form, setField }) {
                 onChange={setField("facilityType")}
                 className="radio"
               />
-              <span className="font-medium">{opt}</span>
+              <span>{opt}</span>
             </label>
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }
-

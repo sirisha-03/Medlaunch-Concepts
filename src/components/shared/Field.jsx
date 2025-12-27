@@ -1,9 +1,16 @@
 import React from "react";
 
-export function Field({ label, required, value, onChange, placeholder, disabled }) {
+export function Field({
+  label,
+  required,
+  value,
+  onChange,
+  placeholder,
+  disabled,
+}) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-slate-700">
+      <label className="field-label">
         {label} {required ? <span className="text-red-500">*</span> : null}
       </label>
       <input
@@ -11,12 +18,8 @@ export function Field({ label, required, value, onChange, placeholder, disabled 
         onChange={onChange}
         placeholder={placeholder}
         disabled={disabled}
-        className={
-          "input " +
-          (disabled ? "bg-slate-100 text-slate-500 cursor-not-allowed" : "")
-        }
+        className={"input " + (disabled ? "field-disabled" : "")}
       />
     </div>
   );
 }
-

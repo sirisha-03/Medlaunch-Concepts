@@ -3,7 +3,7 @@ import React from "react";
 export function Select({ label, required, value, onChange, options }) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-slate-700">
+      <label className="field-label">
         {label} {required ? <span className="text-red-500">*</span> : null}
       </label>
       <select value={value} onChange={onChange} className="select">

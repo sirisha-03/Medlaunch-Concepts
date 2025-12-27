@@ -1,89 +1,167 @@
-# QA Test Report - DNV Quote Request Multi-Step Form
+## Test Scenarios Executed
 
-## Test Environment
+### Scenario 1: Complete Form Flow
 
-- **Browsers**: Chrome 120+, Firefox 121+, Safari 17+
-- **OS**: macOS, Windows 10/11
-- **Screen Resolutions**: 1920x1080, 1366x768, 375x667 (mobile)
-- **Testing Date**: December 2025
+- **Steps**: Fill all 6 steps with valid data and submit
+- **Expected**: Form submits successfully, payload logged to console
+- **Result**: ✅ **PASS** - All data captured correctly, submission works
 
-## High‑Level Test Summary
+### Scenario 2: Step Navigation
 
-- **Multi-step navigation**: Forward/back buttons and quick step jump work; current step is always reflected in the progress bar.
+- **Steps**: Navigate forward/backward through all steps
+- **Expected**: Data persists across navigation, progress bar updates correctly
+- **Result**: ✅ **PASS** - State management works correctly
 
-- **Validation**: Required fields are enforced on Steps 1, 2, 4, 5 and certification checkbox on Step 6.
+### Scenario 3: Required Field Validation
 
-- **State management**: Data entered in one step persists when navigating across all steps.
+- **Steps**: Try to continue without filling required fields on each step
+- **Expected**: Continue button disabled, cannot proceed
+- **Result**: ✅ **PASS** - Validation works on Steps 1, 2, 4, 5, 6
 
-- **File upload**: CSV / Excel upload supports click + drag‑and‑drop; multiple files and removal are handled correctly.
+### Scenario 4: "Same As" Checkbox Functionality
 
-- **Services & certifications**: Search, checkbox selection, standards chips, and date pickers all behave as expected.
+- **Steps**:
+  - Check "Same as Legal Entity Name" → DBA should auto-fill
+  - Uncheck → DBA should be editable
+  - Check "Same as Primary Contact" for CEO/Quality/Invoicing → fields should copy
+  - Uncheck → fields should clear
+- **Expected**: Fields copy when checked, clear when unchecked
+- **Result**: ✅ **PASS** - Logic works correctly
 
-- **Review & submit**: Step 6 accurately summarizes all data and only allows submission when certification is confirmed.
+### Scenario 5: Date Picker Functionality
 
-- **Form submission**: Final payload is logged to the browser console as a JSON object.
+- **Steps**:
+  - Click on date input fields
+  - Select dates from calendar
+  - Add multiple dates to chip inputs
+- **Expected**: Calendar opens on click, dates display as MM/DD/YYYY
+- **Result**: ✅ **PASS** - After fixes, calendar opens reliably
 
-- **Responsive design**: Layout remains usable on desktop, tablet, and mobile resolutions.
+### Scenario 6: Service Search
 
-- **Accessibility**: All interactive elements are keyboard reachable and have associated labels.
+- **Steps**:
+  - Type in service search box
+  - Verify cursor position maintained
+  - Verify real-time filtering works
+- **Expected**: Search filters services, cursor stays in place while typing
+- **Result**: ✅ **PASS** - Search works, cursor position fixed
 
-## Key Test Scenarios
+### Scenario 7: File Upload
 
-### Navigation & Progress
+- **Steps**:
+  - Select "Multiple Locations"
+  - Upload CSV/Excel files via click and drag-and-drop
+  - Remove files
+- **Expected**: Files upload correctly, can be removed
+- **Result**: ✅ **PASS** - Upload functionality works
 
-- Navigate through all 6 steps using **Continue/Previous** – state is preserved ✅
-- Use quick step buttons to jump between steps – correct step content and progress state shown ✅
+### Scenario 8: Scroll Position
 
-### Core Validation
+- **Steps**:
+  - Scroll down page
+  - Add date chips, select standards, toggle services
+- **Expected**: Page should not jump to top
+- **Result**: ✅ **PASS** - Scroll position preserved after fixes
 
-- **Step 1** – required organization and primary contact fields block progression when empty ✅
-- **Step 2** – cannot continue without selecting **Facility Type** ✅
-- **Step 4** – cannot continue without choosing **Single** vs **Multiple Locations** ✅
-- **Step 5** – at least one service must be selected before continuing ✅
-- **Step 6** – submit button disabled until certification checkbox is checked ✅
+### Scenario 9: Review Page (Step 6)
 
-### Data Integrity & “Same As” Logic
+- **Steps**:
+  - Navigate to Step 6
+  - Expand/collapse sections
+  - Verify all data displayed correctly
+- **Expected**: All entered data visible, sections toggle correctly
+- **Result**: ✅ **PASS** - Review page displays all data accurately
 
-- Data entered in any step persists when navigating forward/backward ✅
-- “Same as Legal Entity Name” correctly fills and locks DBA, and re‑enables editing when unchecked ✅
-- “Same as Primary Contact” correctly copies primary contact details to CEO / Quality / Invoicing contacts ✅
+### Scenario 10: Responsive Design
 
-### Upload Site Information
-
-- Selecting **Multiple Locations** reveals upload area; **Single Location** hides it ✅
-- Clicking **Select file** or using drag‑and‑drop adds CSV/Excel files to uploaded list with correct name and size ✅
-- Files can be removed individually, and multiple uploads are supported ✅
-
-### Services & Certifications
-
-- Service search filters cards in real time and restores full list when cleared ✅
-- Selecting/deselecting services updates the selected set and persists across navigation ✅
-- Standards dropdown adds chips; duplicate standards are prevented; chips can be removed ✅
-- Date fields and multi‑date chip inputs store ISO dates and display them as **MM/DD/YYYY** ✅
-
-### Review & Submit (Step 6)
-
-- Accordion sections (Basic, Facility, Leadership, Site, Services) expand/collapse and show all captured data ✅
-- Dates, services, standards, and uploaded files are rendered in the expected summary format ✅
-- When form is fully valid and certification is checked, **Submit Application** logs the full payload to the console ✅
-
-### Responsive & Accessibility Checks
-
-- Desktop, tablet, and mobile views keep the form readable and all actions usable ✅
-- Tab order follows a logical path through inputs and buttons; labels are correctly announced by screen readers ✅
+- **Steps**: Test on desktop (1920x1080), tablet (768px), mobile (375px)
+- **Expected**: Form remains usable and readable on all screen sizes
+- **Result**: ✅ **PASS** - Responsive design works correctly
 
 ## Bugs Identified & Resolved
 
-1. **Date format display** – Date chips initially showed ISO format
+### Bug 1: Scroll-to-Top Issue
 
-   - ✅ **Fix**: Centralized helper now converts ISO → `MM/DD/YYYY` for all displayed dates.
+- **Description**: Page scrolled to top when adding dates, selecting standards, or toggling services
+- **Impact**: Poor user experience, users lost their place on the page
+- **Root Cause**: React re-renders after state updates were resetting scroll position
+- **Resolution**:
+  - Saved `window.scrollY` before state updates
+  - Restored scroll position using `setTimeout(() => window.scrollTo(0, scrollY), 0)`
+  - Applied to `DateField`, `ChipDateInput`, and `Step5` functions (`addStandard`, `removeStandard`, `toggleService`, `removeDateChip`)
+- **Status**: ✅ **FIXED**
 
-2. **File upload type restrictions** – File input accepted any file type
+### Bug 2: Calendar Not Opening on Click
 
-   - ✅ **Fix**: Added `accept=".csv,.xlsx,.xls"` to restrict to CSV/Excel.
+- **Description**: Date picker calendar did not open when clicking on date input fields
+- **Impact**: Users could not select dates, breaking date input functionality
+- **Root Cause**: Text input overlay was preventing clicks from reaching the native date input; `showPicker()` requires direct user gesture
+- **Resolution**:
+  - Made visible text input `readOnly` with `pointerEvents: 'none'`
+  - Positioned invisible `<input type="date">` overlay covering entire input area
+  - Used `showPicker()` in `onMouseDown` handler (direct user gesture)
+  - Added proper z-index layering
+- **Status**: ✅ **FIXED**
 
-3. **Disabled button clarity** – Disabled buttons were not visually distinct
-   - ✅ **Fix**: Added reduced‑opacity styling for disabled primary/secondary buttons.
+### Bug 3: Cursor Position Not Restoring in Search Input
+
+- **Description**: When typing in service search box, cursor jumped to end after each keystroke, allowing only one character at a time
+- **Impact**: Users could not type normally in search field
+- **Root Cause**: React re-renders after state updates were resetting cursor position
+- **Resolution**:
+  - Saved cursor position (`selectionStart`) before state update
+  - Used `requestAnimationFrame` to restore cursor after DOM update
+  - Used `useRef` to access input element directly
+  - Implemented `useCallback` for stable handler function
+- **Status**: ✅ **FIXED**
+
+### Bug 4: Date Format Inconsistency
+
+- **Description**: Date chips displayed ISO format instead of MM/DD/YYYY as specified in Figma
+- **Impact**: Dates displayed in wrong format, inconsistent with design
+- **Root Cause**: Helper function `isoToDDMMYYYY` was returning DD/MM/YYYY format
+- **Resolution**:
+  - Updated `isoToDDMMYYYY` helper function to return `MM/DD/YYYY` format
+  - Updated all placeholders to `mm/dd/yyyy` for consistency
+  - Ensured all date displays use same format throughout application
+- **Status**: ✅ **FIXED**
+
+### Bug 5: "Same as Primary Contact" Not Clearing on Uncheck
+
+- **Description**: When unchecking "Same as Primary Contact" checkbox, copied values remained instead of clearing
+- **Impact**: Users could not enter different values after unchecking
+- **Root Cause**: Logic only handled checked state, not unchecked state
+- **Resolution**:
+  - Updated `setField` function to clear values when checkbox is unchecked
+  - Applied to CEO, Quality, and Invoicing contact fields
+  - Values now clear to empty strings when checkbox is unchecked
+- **Status**: ✅ **FIXED**
+
+### Bug 6: File Upload Type Restrictions
+
+- **Description**: File input accepted any file type, not just CSV/Excel
+- **Impact**: Users could upload invalid file types
+- **Root Cause**: Missing `accept` attribute on file input
+- **Resolution**: Added `accept=".csv,.xlsx,.xls"` to file input element
+- **Status**: ✅ **FIXED**
+
+### Bug 7: Disabled Button Visual Clarity
+
+- **Description**: Disabled buttons were not visually distinct from enabled buttons
+- **Impact**: Users couldn't tell when buttons were disabled
+- **Root Cause**: Missing disabled state styling
+- **Resolution**: Added reduced-opacity styling for disabled primary/secondary buttons
+- **Status**: ✅ **FIXED**
+
+### Bug 8: React Warning - Non-Unique Keys
+
+- **Description**: Console warning: "Encountered two children with the same key, Pediatric Intensive Care Services"
+- **Impact**: Potential React rendering issues, console warnings
+- **Root Cause**: Duplicate service name in categories array, non-unique keys in mapped items
+- **Resolution**:
+  - Removed duplicate "Pediatric Intensive Care Services" entry
+  - Updated key to `key={`${cat.title}-${svc}-${idx}`}` for uniqueness
+- **Status**: ✅ **FIXED**
 
 ## Test Coverage Summary
 

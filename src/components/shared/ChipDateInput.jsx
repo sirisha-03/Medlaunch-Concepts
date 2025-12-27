@@ -13,20 +13,18 @@ export function ChipDateInput({
 
   return (
     <div>
-      <label className="block text-xs font-semibold text-slate-700">
-        {label}
-      </label>
-      <div className="mt-2 relative">
+      <label className="date-field-label">{label}</label>
+      <div className="date-field-wrapper">
         {/* Text input for display only - not editable */}
         <input
           type="text"
           value={
             chips.length > 0
               ? `${chips.length} date${chips.length > 1 ? "s" : ""} selected`
-              : placeholder || "mm/dd/yyyy , mm/dd/yyyy"
+              : placeholder || "mm/dd/yyyy "
           }
           readOnly
-          className="input pr-10"
+          className="input date-field-input"
           style={{ pointerEvents: "none", cursor: "pointer" }}
         />
 
@@ -49,6 +47,7 @@ export function ChipDateInput({
             zIndex: 10,
             cursor: "pointer",
             backgroundColor: "transparent",
+            fontSize: "16px",
           }}
           onChange={(e) => {
             const picked = isoToDDMMYYYY(e.target.value);
@@ -78,16 +77,32 @@ export function ChipDateInput({
             e.stopPropagation();
           }}
           onMouseDown={(e) => {
-            // Ensure calendar opens on mousedown as well
+            // Ensure calendar opens on mousedown (direct user gesture)
             e.stopPropagation();
+            // Try to show picker immediately on mousedown (direct user gesture)
+            try {
+              if (e.target.showPicker) {
+                e.target.showPicker();
+              } else {
+                // Fallback: focus the input (browser may open calendar on focus)
+                e.target.focus();
+              }
+            } catch (err) {
+              // showPicker() can throw in cross-origin iframes, ignore
+              // Fallback: focus the input
+              e.target.focus();
+            }
+          }}
+          onFocus={(e) => {
+            // Don't call showPicker() here - it requires direct user gesture
+            // The browser should open calendar automatically on focus for date inputs
           }}
           aria-label="Pick date"
         />
 
         {/* Calendar icon for visual indication */}
         <span
-          className="absolute right-3 top-2.5 pointer-events-none select-none text-slate-500"
-          style={{ zIndex: 5 }}
+          className="chip-date-icon"
           title="Click anywhere to select date from calendar"
           aria-label="Calendar icon"
         >
@@ -96,7 +111,7 @@ export function ChipDateInput({
       </div>
 
       {chips.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="chip-date-container">
           {chips.map((d, idx) => (
             <span key={idx} className="chip chip-dark">
               {d}

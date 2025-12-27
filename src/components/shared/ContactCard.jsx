@@ -15,10 +15,10 @@ export function ContactCard({
 }) {
   return (
     <div className="card-border">
-      <div className="px-6 py-5">
-        <div className="text-sm font-semibold text-slate-800">{title}</div>
+      <div className="contact-card-content">
+        <div className="contact-card-title">{title}</div>
 
-        <label className="mt-3 flex items-center gap-2 text-xs text-slate-700">
+        <label className="contact-card-checkbox">
           <input
             type="checkbox"
             className="checkbox"
@@ -28,7 +28,7 @@ export function ContactCard({
           Same as Primary Contact entered in Step 1
         </label>
 
-        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="contact-card-grid">
           <Field
             label="First Name"
             required={!!required}
@@ -43,7 +43,7 @@ export function ContactCard({
           />
         </div>
 
-        <div className="mt-5">
+        <div className="contact-card-field">
           <Field
             label="Phone"
             required={!!required}
@@ -52,7 +52,7 @@ export function ContactCard({
           />
         </div>
 
-        <div className="mt-5">
+        <div className="contact-card-field">
           <Field
             label="Email"
             required={!!required}
@@ -64,4 +64,3 @@ export function ContactCard({
     </div>
   );
 }
-

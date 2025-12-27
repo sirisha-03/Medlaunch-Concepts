@@ -7,11 +7,13 @@ import { US_STATES } from "../../utils/constants";
 export function Step3({ form, setField }) {
   return (
     <div>
-      <h2 className="text-xl font-semibold text-slate-800">
-        Contact Information
-      </h2>
+      {/* 1. Title Container */}
+      <div className="step3-title-container">
+        <h2 className="section-title">Contact Information</h2>
+      </div>
 
-      <div className="mt-6 space-y-6">
+      {/* 2. CEO Container */}
+      <div className="step3-ceo-container">
         <ContactCard
           title="Chief Executive Officer (CEO)"
           sameChecked={form.ceo_sameAsPrimary}
@@ -24,7 +26,10 @@ export function Step3({ form, setField }) {
           setField={setField}
           required
         />
+      </div>
 
+      {/* 3. Director of Quality Container */}
+      <div className="step3-quality-container">
         <ContactCard
           title="Director of Quality"
           sameChecked={form.quality_sameAsPrimary}
@@ -36,14 +41,15 @@ export function Step3({ form, setField }) {
           form={form}
           setField={setField}
         />
+      </div>
 
+      {/* 4. Invoicing Contact Container */}
+      <div className="step3-invoicing-container">
         <div className="card-border">
-          <div className="px-6 py-5">
-            <div className="text-sm font-semibold text-slate-800">
-              Invoicing Contact
-            </div>
+          <div className="contact-card-content">
+            <div className="contact-card-title">Invoicing Contact</div>
 
-            <label className="mt-3 flex items-center gap-2 text-xs text-slate-700">
+            <label className="contact-card-checkbox">
               <input
                 type="checkbox"
                 className="checkbox"
@@ -53,7 +59,7 @@ export function Step3({ form, setField }) {
               Same as Primary Contact entered in Step 1
             </label>
 
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="contact-card-grid">
               <Field
                 label="First Name"
                 required
@@ -68,7 +74,7 @@ export function Step3({ form, setField }) {
               />
             </div>
 
-            <div className="mt-5">
+            <div className="contact-card-field">
               <Field
                 label="Phone"
                 required
@@ -77,7 +83,7 @@ export function Step3({ form, setField }) {
               />
             </div>
 
-            <div className="mt-5">
+            <div className="contact-card-field">
               <Field
                 label="Email"
                 required
@@ -86,12 +92,10 @@ export function Step3({ form, setField }) {
               />
             </div>
 
-            <div className="mt-8">
-              <div className="text-sm font-semibold text-slate-800">
-                Billing Address
-              </div>
+            <div style={{ marginTop: "32px" }}>
+              <div className="contact-card-title">Billing Address</div>
 
-              <div className="mt-4">
+              <div style={{ marginTop: "16px" }}>
                 <Field
                   label="Street Address"
                   required
@@ -100,7 +104,7 @@ export function Step3({ form, setField }) {
                 />
               </div>
 
-              <div className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-5">
+              <div className="form-three-column" style={{ marginTop: "20px" }}>
                 <Field
                   label="City"
                   required
@@ -128,4 +132,3 @@ export function Step3({ form, setField }) {
     </div>
   );
 }
-
